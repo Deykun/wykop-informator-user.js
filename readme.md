@@ -2,7 +2,7 @@
 
 Skrypt wyświetla dodatkowe informacje o liczbie zgłoszeń i ich ocenie w serwisie **wykop.pl**, zapisuje też dane o powodach zgłoszeń i moderatorach którzy je rozpatrywali wyświetlając na ich podstawie statystyki.
 
-![](http://x3.cdn03.imgwykop.pl/c3201142/comment_HyxPI4uj6ruDCLTeUPRezVGlKIAQk0diYUvLpEOdAZ8UDOgNbbQjZxOseNknNRYTHW47PAjmTxuVEMcqV1CJcTW4rn1WWusvfF03,w400.jpg)
+![](http://x3.cdn03.imgwykop.pl/c3201142/comment_HyxPI4uj6ruDCLTeUPRezVGlKIAQk0diYUvLpEOdAZ8UDOgNbbQjZxOseNknNRYTHW47PAjmTxuVEMcqV1CJcTW4rn1WWusvfF03.jpg)
 
 ### Panel zgłoszeń
 W panelu zgłoszeń widoczne jest maksymalnie **50** ostatnich zgłoszeń z **ostatniego tygodnia** (reszta jest niewidoczna).
@@ -21,7 +21,7 @@ Skrypt pobiera zgłoszenia z tabeli zapisując ich:
 - status (zostały opisane wyżej)
 - kod moderatora (moderatorzy mają w panelu kody zamiast nicków)
  
-Na podstawie zebranych informacji dodatek wyświetla w panelu odnośnik z informacją o tym ile jakiego typu zgłoszeń widoczne jest na stronie. Sam odnośnik prowadzi do strony ze statystykami dotyczącymi wszystkich zapisanych zgłoszęń (jest to nieistniejąca strona w serwisie która zwraca błąd 404, ale element ten jest zastępowany).
+Na podstawie zebranych informacji dodatek wyświetla w panelu odnośnik z informacją o tym ile jakiego typu zgłoszeń widoczne jest na stronie. Sam odnośnik prowadzi do strony ze statystykami dotyczącymi wszystkich zapisanych zgłoszeń (jest to nieistniejąca strona w serwisie która zwraca błąd 404, ale element ten jest zastępowany).
 
 ![](http://x3.cdn03.imgwykop.pl/c3201142/comment_QFBt6RZ2ybfjSTeVqlXmkZJ54AxGqnNu.jpg)
 
