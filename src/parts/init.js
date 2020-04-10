@@ -38,41 +38,4 @@ const STATES = [
 	},
 ]
 
-
-const LSinitState = {
-	total: { },
-	reasons: {
-
-	},
-	mods: {
-
-	}
-}
-STATES.forEach( s => {
-	LSinitState.total[s.code] = 0
-})
-
-// const LSexampleState = {
-// 	total: {
-// 	},
-// 	reasons: {
-// 		nieprawidlowe_tagi: {
-// 			title,
-// 			success,
-// 			fail,
-// 			consultation,
-// 			mods: {
-// 				mtm: {
-// 					success,
-// 					fail,
-// 					consultation
-// 				}
-// 			}
-// 		}
-// 	},
-// 	mods: {
-// 		success,
-// 		fail,
-// 		consultation
-// 	}
-// }
+const RESOLVED_STATES = ['success', 'fail', 'changed']

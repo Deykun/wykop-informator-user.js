@@ -11,20 +11,26 @@
 //
 // ==/UserScript==
 
+// Inits
 [[init.js]]
 
+// Helpers
+[[helpers.js]]
+
+// Parse
 [[parse.js]]
 
+// Render
 [[render.js]]
+
+// State
+[[state.js]]
 
 if ( document.location.pathname.match('/naruszenia/moje') ) {
 	const violations = getViolations()
 	console.log( violations )
 	const { statistics } = processViolations( violations )
 	console.log( statistics )
-	if ( statistics.change ) {
-		// Saving change
-	}
 	renderLink( statistics )
 }
 	

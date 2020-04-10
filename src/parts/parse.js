@@ -12,6 +12,7 @@ const getViolations = () => {
 			moderator: moderator, 
 			status: STATES.find( s => s.name === status ).code,
 			reason: reason,
+			reasonKey: hashToKey(reason),
 			date: date,
 		}
 
@@ -26,25 +27,36 @@ const getViolations = () => {
 	return violations
 }
 
-
-const processViolations = ( violations, save=false ) => {
-	// const checked = getAlreadyChecked()
-	// const inConsultation = getInConsultation()
+const processViolations = ( violations, save=true ) => {
+	let store = getStore()
+	const { checked, consulted } = store.latest
 	const total = {}
 	const change = {}
 	STATES.forEach( s => {
-		total[s.code] = 1
-		change[s.code] = 2
+		total[s.code] = 0
+		change[s.code] = 0
 	})
 
-	violations.forEach( v => {
-		total[v.status]++
+	violations.forEach( violation => {
+		const { id, status } = violation
+		total[status]++
+		if ( save ) {
+			if ( !checked.includes( id ) && [...RESOLVED_STATES, 'consultation'].includes( status ) ) {
+				console.log('save new')
+				console.log( violation )
+				store = addViolationToStore( violation, store )
+			} else if ( consulted.includes( id ) && RESOLVED_STATES.includes( status )  ) {
+				console.log('save resolved') 
+			}
+		}
 	})
+
+	console.log( store )
 
 	return {
 		statistics: {
 			total: total,
-			change: Object.keys( change ).some( idx => change[idx] > 0 ) ? change : null
+			change: change
 		}
 	}
 }

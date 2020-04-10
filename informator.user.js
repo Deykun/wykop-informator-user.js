@@ -11,6 +11,7 @@
 //
 // ==/UserScript==
 
+// Inits
 const version = '4'
 console.info(`%c Informator ${version}`, 'color: white; background: #4383af; padding: 10px 35px; font-size: 1rem; font-family: Arial, Verdana; border-radius: 5px;')
 
@@ -51,45 +52,14 @@ const STATES = [
 	},
 ]
 
+const RESOLVED_STATES = ['success', 'fail', 'changed']
 
-const LSinitState = {
-	total: { },
-	reasons: {
-
-	},
-	mods: {
-
-	}
+// Helpers
+const hashToKey = text => {
+  return text.toLowerCase().replace(/ /g, '_').replace(/[ą|ć|ę|ń|ł|ż|ó]/g, '').replace(/[^a-z0-9_]+/g, '').substring(0, 25)
 }
-STATES.forEach( s => {
-	LSinitState.total[s.code] = 0
-})
 
-// const LSexampleState = {
-// 	total: {
-// 	},
-// 	reasons: {
-// 		nieprawidlowe_tagi: {
-// 			title,
-// 			success,
-// 			fail,
-// 			consultation,
-// 			mods: {
-// 				mtm: {
-// 					success,
-// 					fail,
-// 					consultation
-// 				}
-// 			}
-// 		}
-// 	},
-// 	mods: {
-// 		success,
-// 		fail,
-// 		consultation
-// 	}
-// }
-
+// Parse
 const getViolations = () => {
 	const violations = []
 	document.getElementById('violationsList').querySelectorAll('tbody tr').forEach( vTr => {
@@ -104,6 +74,7 @@ const getViolations = () => {
 			moderator: moderator, 
 			status: STATES.find( s => s.name === status ).code,
 			reason: reason,
+			reasonKey: hashToKey(reason),
 			date: date,
 		}
 
@@ -118,31 +89,43 @@ const getViolations = () => {
 	return violations
 }
 
-
-const processViolations = ( violations, save=false ) => {
-	// const checked = getAlreadyChecked()
-	// const inConsultation = getInConsultation()
+const processViolations = ( violations, save=true ) => {
+	let store = getStore()
+	const { checked, consulted } = store.latest
 	const total = {}
 	const change = {}
 	STATES.forEach( s => {
-		total[s.code] = 1
-		change[s.code] = 2
+		total[s.code] = 0
+		change[s.code] = 0
 	})
 
-	violations.forEach( v => {
-		total[v.status]++
+	violations.forEach( violation => {
+		const { id, status } = violation
+		total[status]++
+		if ( save ) {
+			if ( !checked.includes( id ) && [...RESOLVED_STATES, 'consultation'].includes( status ) ) {
+				console.log('save new')
+				console.log( violation )
+				store = addViolationToStore( violation, store )
+			} else if ( consulted.includes( id ) && RESOLVED_STATES.includes( status )  ) {
+				console.log('save resolved') 
+			}
+		}
 	})
+
+	console.log( store )
 
 	return {
 		statistics: {
 			total: total,
-			change: Object.keys( change ).some( idx => change[idx] > 0 ) ? change : null
+			change: change
 		}
 	}
 }
 
 
 
+// Render
 const appendCSS = ( styles ) => {
 	const style = document.createElement('style')
 	style.innerHTML = styles
@@ -213,14 +196,86 @@ const renderLink = ( stats ) => {
 	document.querySelector('.bspace > ul:last-child').innerHTML += linkToStats
 }
 
+// State
+// const LSexampleState = {
+// 	total: {
+// 	},
+// 	reasons: {
+// 		nieprawidlowe_tagi: {
+// 			title,
+// 			success,
+// 			fail,
+// 			consultation,
+// 			mods: {
+// 				mtm: {
+// 					success,
+// 					fail,
+// 					consultation
+// 				}
+// 			}
+// 		}
+// 	},
+// 	mods: {
+// 		success,
+// 		fail,
+// 		consultation
+// 	}
+// }
+
+const getStore = ( ) => {
+	const defaultInitState = {
+		latest: {
+			checked: [],
+			consulted: []
+		},
+		total: {  
+		},
+		reasons: {
+		},
+		mods: {
+		}
+	}
+	STATES.forEach( s => {
+		defaultInitState.total[s.code] = 0
+	})
+
+	return defaultInitState
+}
+
+const addViolationToStore = ( violation, store ) => {
+	const { reason, reasonKey, status, moderator, date } = violation
+
+	store.total[status] = store.total[status] + 1
+
+	if ( !store.reasons[reasonKey] ) {
+		console.info(`Nowy powód "${reason}"`)
+		store.reasons[reasonKey] = { title: reason, mods: {} }
+	}
+	store.reasons[reasonKey][status] = store.reasons[reasonKey][status] ? store.reasons[reasonKey][status] + 1 : 1
+	
+	if ( !store.reasons[reasonKey].mods[moderator] ) {
+		console.info(`Nowy moderator ${moderator}`)
+		store.reasons[reasonKey].mods[moderator] = { title: moderator }
+	}
+	
+	store.reasons[reasonKey].mods[moderator][status] = store.reasons[reasonKey].mods[moderator][status] ? store.reasons[reasonKey].mods[moderator][status] + 1 : 1
+
+	if ( !store.mods[moderator] ) {
+		store.mods[moderator] = { title: moderator, times: { } }
+	}
+
+	const hours = new Date( date ).getHours()
+
+	store.mods[moderator][hours] = store.mods[moderator][hours] ? store.mods[moderator][hours] + 1 : 1
+
+	return store
+}
+
 if ( document.location.pathname.match('/naruszenia/moje') ) {
 	const violations = getViolations()
 	console.log( violations )
 	const { statistics } = processViolations( violations )
 	console.log( statistics )
-	if ( statistics.change ) {
-		// Saving change
-	}
 	renderLink( statistics )
 }
 	
