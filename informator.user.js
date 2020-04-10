@@ -16,6 +16,8 @@ console.info(`%c Informator ${version}`, 'color: white; background: #4383af; pad
 
 const darkmode = Array.from( document.body.classList ).includes('night')
 
+const debug = true
+
 const STATES = [
 	{
 		code: 'success',
@@ -48,6 +50,7 @@ const STATES = [
 		color: '#717171',
 	},
 ]
+
 
 const LSinitState = {
 	total: { },
@@ -87,32 +90,14 @@ STATES.forEach( s => {
 // 	}
 // }
 
-const appendCSS = ( styles ) => {
-	const style = document.createElement('style')
-	style.innerHTML = styles
-	document.head.append(style)
-}
-
-const appendColorsCSS = ( ) => {
-	let colorsCSS = ''
-	STATES.forEach( s => {
-		colorsCSS += `
-			.in-txt-${s.code} { color: ${s.color} !important; }
-			.in-bg-${s.code} { background-color: ${s.color} !important; }
-		`
-	})
-
-	appendCSS( colorsCSS )
-}
-
-const getList = () => {
-	const list = []
+const getViolations = () => {
+	const violations = []
 	document.getElementById('violationsList').querySelectorAll('tbody tr').forEach( vTr => {
 		const id = vTr.querySelector('td:nth-child(3) p').textContent.split(':').reverse().pop()
-		const status = vTr.querySelector('td:nth-child(4) .fbold').textContent
-		const reason = vTr.querySelector('td:nth-child(3) .fbold').textContent
-		const moderator = vTr.querySelector('td:nth-child(4) .fbold + span').textContent.split('przez').pop().trim()
-		const date = vTr.querySelector('td:nth-child(4) time') ? vTr.querySelector('td:nth-child(4) time').getAttribute('datetime') : null
+		const status = vTr.querySelector('td:nth-child(4) .fbold') && vTr.querySelector('td:nth-child(4) .fbold').textContent
+		const reason = vTr.querySelector('td:nth-child(3) .fbold') && vTr.querySelector('td:nth-child(3) .fbold').textContent
+		const moderator = vTr.querySelector('td:nth-child(4) .fbold + span') && vTr.querySelector('td:nth-child(4) .fbold + span').textContent.split('przez').pop().trim()
+		const date = vTr.querySelector('td:nth-child(4) time') && vTr.querySelector('td:nth-child(4) time').getAttribute('datetime')
 		
 		const violation = {
 			id: id,
@@ -124,12 +109,17 @@ const getList = () => {
 
 		vTr.id = `v-${id}`
 
-		list.push( violation )
+		if ( debug ) {
+			console.log('Violation:', violation)
+		}
+
+		violations.push( violation )
 	})
-	return list
+	return violations
 }
 
-const getVolationsStats = ( violations ) => {
+
+const processViolations = ( violations, save=false ) => {
 	// const checked = getAlreadyChecked()
 	// const inConsultation = getInConsultation()
 	const total = {}
@@ -144,12 +134,33 @@ const getVolationsStats = ( violations ) => {
 	})
 
 	return {
-		total: total,
-		change: Object.keys( change ).some( idx => change[idx] > 0 ) ? change : null
+		statistics: {
+			total: total,
+			change: Object.keys( change ).some( idx => change[idx] > 0 ) ? change : null
+		}
 	}
 }
 
-const renderMiniStats = ( stats ) => {
+
+
+const appendCSS = ( styles ) => {
+	const style = document.createElement('style')
+	style.innerHTML = styles
+	document.head.append(style)
+}
+
+const appendColorsCSS = ( ) => {
+	let colorsCSS = ''
+	STATES.forEach( s => {
+		colorsCSS += `
+			.in-txt-${s.code} { color: ${s.color} !important; }
+			.in-bg-${s.code} { background-color: ${s.color} !important; }
+		`
+	})
+	appendCSS( colorsCSS )
+}
+
+const renderLink = ( stats ) => {
 	appendColorsCSS()
 	appendCSS(`
 		.in-m__box {
@@ -162,28 +173,38 @@ const renderMiniStats = ( stats ) => {
 		}
 		.in-m__value {
 			vertical-align: middle;
+			position: relative;
+		}
+		.in-m__value[data-change]::before {
+			content: attr(data-change);
+			position: absolute;
+			top: 100%;
+			left: 50%;
+			transform: translateX( -50% );
+			font-size: 10px;
+			line-height: 10px;
+			color: white;
+			background-color: #4383af;
 		}
 		.in-m > :last-child {
 			margin-right: 25px;
 		}
-	`)
+  `)
+  
 	let linkToStats
 	if ( stats.total ) {
-		console.log(stats.total)
 		let statsHTML = ''
 		Object.keys( stats.total ).forEach( status => {
 			const value = stats.total[status]
 			if ( value > 0 ) {
-				const valueEl = `<span class="in-m__value in-m__value--${status}">${value}</span>`
+				const valueEl = `<span class="in-m__value" ${stats.change[status] ? `data-change="${stats.change[status]}"` : ''}>${value}</span>`
 				const boxEl = `<span class="in-m__box in-bg-${status}"></span>`
-				statsHTML += `<span class="in-m">${status === 'fail' ? boxEl+valueEl : valueEl+boxEl}</span>`
+				statsHTML += `<span class="in-m in-m--${status}">${status === 'fail' ? boxEl+valueEl : valueEl+boxEl}</span>`
 			}
 		})
 		linkToStats = `<li>
 			<a href="http://www.wykop.pl/naruszenia/informator">
-				<div class="in-mini-stat">
-					${statsHTML}
-				</div>
+				${statsHTML}
 			</a>
 		</liv>`
 	} else {
@@ -193,14 +214,13 @@ const renderMiniStats = ( stats ) => {
 }
 
 if ( document.location.pathname.match('/naruszenia/moje') ) {
-	
-	const violations = getList()
+	const violations = getViolations()
 	console.log( violations )
-	const stats = getVolationsStats( violations )
-	console.log( stats )
-	if ( stats.change ) {
+	const { statistics } = processViolations( violations )
+	console.log( statistics )
+	if ( statistics.change ) {
 		// Saving change
 	}
-	renderMiniStats( stats )
+	renderLink( statistics )
 }
 	
