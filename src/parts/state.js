@@ -1,11 +1,12 @@
 const getStore = ( ) => {
-	const defaultInitState = {
+	const initStore = {
 		settings: {
 			hideThumbnails: true
 		},
 		latest: {
+			seen: [],
 			checked: [],
-			consulted: []
+			inConsultation: []
 		},
 		total: {  
 		},
@@ -15,10 +16,16 @@ const getStore = ( ) => {
 		}
 	}
 	STATES.forEach( s => {
-		defaultInitState.total[s.code] = 0
+		initStore.total[s.code] = 0
 	})
 
-	return defaultInitState
+	let store = localStorage.getItem('informator') ? JSON.parse( localStorage.getItem('informator') ) : initStore
+
+	return store
+}
+
+const saveStore = ( store ) => {
+	localStorage.setItem('informator', JSON.stringify( store ) )
 }
 
 const addViolationToStore = ( violation, store ) => {

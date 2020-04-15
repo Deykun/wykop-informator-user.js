@@ -22,36 +22,42 @@ const debug = true
 const STATES = [
 	{
 		code: 'success',
+		checked: true,
 		resolved: true,
 		name: 'Prawidłowe',
 		color: '#8aa380',
 	},
 	{
 		code: 'fail',
+		checked: true,
 		resolved: true,
 		name: 'Nieprawidłowe',
 		color: '#b3868f',
 	},
 	{
 		code: 'changed',
+		checked: true,
 		resolved: true,
 		name: 'Zmieniony powód',
 		color: '#dfc56e',
 	},
 	{
 		code: 'consultation',
+		checked: true,
 		resolved: false,
 		name: 'W konsultacji',
 		color: '#62a2b1',
 	},
 	{
 		code: 'fresh',
+		checked: false,
 		resolved: false,
 		name: 'Nowe',
 		color: '#8cb1ba',
 	},
 	{
 		code: 'current',
+		checked: false,
 		resolved: false,
 		name: 'Rozpatrywane',
 		label: '',
@@ -60,7 +66,13 @@ const STATES = [
 ]
 
 const STATES_STATUTES = {}
-STATES.forEach( s => STATES_STATUTES[s.code] = s )
+const CHECKED_STATES = []
+const RESOLVED_STATES = []
+STATES.forEach( s => {
+	STATES_STATUTES[s.code] = s
+	if ( s.resolved ) { RESOLVED_STATES.push( s.code ) }
+	if ( s.checked ) { CHECKED_STATES.push( s.code ) }
+} )
 
 const THEME_COLORS = [
 	{
@@ -72,8 +84,6 @@ const THEME_COLORS = [
 		color: '#fff'
 	}
 ]
-
-const RESOLVED_STATES = ['success', 'fail', 'changed']
 
 // Helpers
 const hashToKey = text => {
@@ -112,29 +122,57 @@ const getViolations = () => {
 
 const processViolations = ( violations, save=true ) => {
 	let store = getStore()
-	const { checked, consulted } = store.latest
+	const { seen, checked, inConsultation } = store.latest
 	const total = {}
 	const change = {}
 	STATES.forEach( s => {
 		total[s.code] = 0
-		change[s.code] = 1
+		change[s.code] = 0
 	})
+
+	const newLatest = {
+		seen: [],
+		checked: [],
+		inConsultation: []
+	}
 
 	violations.forEach( violation => {
 		const { id, status } = violation
 		total[status]++
-		if ( save ) {
-			if ( !checked.includes( id ) && [...RESOLVED_STATES, 'consultation'].includes( status ) ) {
-				console.log('save new')
-				console.log( violation )
-				store = addViolationToStore( violation, store )
-			} else if ( consulted.includes( id ) && RESOLVED_STATES.includes( status )  ) {
-				console.log('save resolved') 
+		newLatest.seen.push( id )
+		if ( !seen.includes( id ) ) {
+			change[status]++
+		}
+
+		if ( CHECKED_STATES.includes( status ) ) {
+			newLatest.checked.push( id )
+			if ( status === 'consultation' ) {
+				newLatest.inConsultation.push( id )
 			}
+
+			if ( !checked.includes( id ) ) {
+				change[status]++
+				if ( debug ) {
+					console.log('New volation')
+					console.log( violation )
+				}
+				store = addViolationToStore( violation, store )
+			}
+		}
+		
+		if ( seen.includes( id ) && inConsultation.includes( id ) && RESOLVED_STATES.includes( status )  ) {
+			change[status]++
+			console.log('Consultation') 
+			store = addViolationToStore( violation, store )
 		}
 	})
 
-	console.log( store )
+	if ( save ) {
+		console.log('Przed', store.latest)
+		store.latest = newLatest
+		console.log('Po', newLatest)
+		saveStore( store )
+	}
 
 	return {
 		statistics: {
@@ -283,13 +321,14 @@ const renderLink = ( stats ) => {
 
 // State
 const getStore = ( ) => {
-	const defaultInitState = {
+	const initStore = {
 		settings: {
 			hideThumbnails: true
 		},
 		latest: {
+			seen: [],
 			checked: [],
-			consulted: []
+			inConsultation: []
 		},
 		total: {  
 		},
@@ -299,10 +338,16 @@ const getStore = ( ) => {
 		}
 	}
 	STATES.forEach( s => {
-		defaultInitState.total[s.code] = 0
+		initStore.total[s.code] = 0
 	})
 
-	return defaultInitState
+	let store = localStorage.getItem('informator') ? JSON.parse( localStorage.getItem('informator') ) : initStore
+
+	return store
+}
+
+const saveStore = ( store ) => {
+	localStorage.setItem('informator', JSON.stringify( store ) )
 }
 
 const addViolationToStore = ( violation, store ) => {

@@ -8,36 +8,42 @@ const debug = true
 const STATES = [
 	{
 		code: 'success',
+		checked: true,
 		resolved: true,
 		name: 'Prawidłowe',
 		color: '#8aa380',
 	},
 	{
 		code: 'fail',
+		checked: true,
 		resolved: true,
 		name: 'Nieprawidłowe',
 		color: '#b3868f',
 	},
 	{
 		code: 'changed',
+		checked: true,
 		resolved: true,
 		name: 'Zmieniony powód',
 		color: '#dfc56e',
 	},
 	{
 		code: 'consultation',
+		checked: true,
 		resolved: false,
 		name: 'W konsultacji',
 		color: '#62a2b1',
 	},
 	{
 		code: 'fresh',
+		checked: false,
 		resolved: false,
 		name: 'Nowe',
 		color: '#8cb1ba',
 	},
 	{
 		code: 'current',
+		checked: false,
 		resolved: false,
 		name: 'Rozpatrywane',
 		label: '',
@@ -46,7 +52,13 @@ const STATES = [
 ]
 
 const STATES_STATUTES = {}
-STATES.forEach( s => STATES_STATUTES[s.code] = s )
+const CHECKED_STATES = []
+const RESOLVED_STATES = []
+STATES.forEach( s => {
+	STATES_STATUTES[s.code] = s
+	if ( s.resolved ) { RESOLVED_STATES.push( s.code ) }
+	if ( s.checked ) { CHECKED_STATES.push( s.code ) }
+} )
 
 const THEME_COLORS = [
 	{
@@ -58,5 +70,3 @@ const THEME_COLORS = [
 		color: '#fff'
 	}
 ]
-
-const RESOLVED_STATES = ['success', 'fail', 'changed']
