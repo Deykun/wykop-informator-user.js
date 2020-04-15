@@ -1,30 +1,8 @@
-// const LSexampleState = {
-// 	total: {
-// 	},
-// 	reasons: {
-// 		nieprawidlowe_tagi: {
-// 			title,
-// 			success,
-// 			fail,
-// 			consultation,
-// 			mods: {
-// 				mtm: {
-// 					success,
-// 					fail,
-// 					consultation
-// 				}
-// 			}
-// 		}
-// 	},
-// 	mods: {
-// 		success,
-// 		fail,
-// 		consultation
-// 	}
-// }
-
 const getStore = ( ) => {
 	const defaultInitState = {
+		settings: {
+			hideThumbnails: true
+		},
 		latest: {
 			checked: [],
 			consulted: []

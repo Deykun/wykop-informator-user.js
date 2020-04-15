@@ -282,33 +282,11 @@ const renderLink = ( stats ) => {
 }
 
 // State
-// const LSexampleState = {
-// 	total: {
-// 	},
-// 	reasons: {
-// 		nieprawidlowe_tagi: {
-// 			title,
-// 			success,
-// 			fail,
-// 			consultation,
-// 			mods: {
-// 				mtm: {
-// 					success,
-// 					fail,
-// 					consultation
-// 				}
-// 			}
-// 		}
-// 	},
-// 	mods: {
-// 		success,
-// 		fail,
-// 		consultation
-// 	}
-// }
-
 const getStore = ( ) => {
 	const defaultInitState = {
+		settings: {
+			hideThumbnails: true
+		},
 		latest: {
 			checked: [],
 			consulted: []
@@ -357,10 +335,13 @@ const addViolationToStore = ( violation, store ) => {
 }
 
 if ( document.location.pathname.match('/naruszenia/moje') ) {
+	const store = getStore()
+	const { hideThumbnails } = store.settings 
+	if ( hideThumbnails ) {
+		document.querySelectorAll('#violationsList .media-content').forEach( el => el.parentNode.removeChild(el) )
+	}
 	const violations = getViolations()
-	console.log( violations )
 	const { statistics } = processViolations( violations )
-	console.log( statistics )
 	renderLink( statistics )
 }
 	

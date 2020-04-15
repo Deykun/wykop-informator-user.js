@@ -27,10 +27,13 @@
 [[state.js]]
 
 if ( document.location.pathname.match('/naruszenia/moje') ) {
+	const store = getStore()
+	const { hideThumbnails } = store.settings 
+	if ( hideThumbnails ) {
+		document.querySelectorAll('#violationsList .media-content').forEach( el => el.parentNode.removeChild(el) )
+	}
 	const violations = getViolations()
-	console.log( violations )
 	const { statistics } = processViolations( violations )
-	console.log( statistics )
 	renderLink( statistics )
 }
 	
