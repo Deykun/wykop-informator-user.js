@@ -22,34 +22,55 @@ const debug = true
 const STATES = [
 	{
 		code: 'success',
+		resolved: true,
 		name: 'Prawidłowe',
 		color: '#8aa380',
 	},
 	{
 		code: 'fail',
+		resolved: true,
 		name: 'Nieprawidłowe',
 		color: '#b3868f',
 	},
 	{
 		code: 'changed',
+		resolved: true,
 		name: 'Zmieniony powód',
-		color: '#d4cbad',
+		color: '#dfc56e',
 	},
 	{
 		code: 'consultation',
+		resolved: false,
 		name: 'W konsultacji',
 		color: '#62a2b1',
 	},
 	{
 		code: 'fresh',
+		resolved: false,
 		name: 'Nowe',
 		color: '#8cb1ba',
 	},
 	{
 		code: 'current',
-		name: '',
+		resolved: false,
+		name: 'Rozpatrywane',
+		label: '',
 		color: '#717171',
 	},
+]
+
+const STATES_STATUTES = {}
+STATES.forEach( s => STATES_STATUTES[s.code] = s )
+
+const THEME_COLORS = [
+	{
+		code: 'main',
+		color: '#34495e'
+	},
+	{
+		code: 'white',
+		color: '#fff'
+	}
 ]
 
 const RESOLVED_STATES = ['success', 'fail', 'changed']
@@ -72,7 +93,7 @@ const getViolations = () => {
 		const violation = {
 			id: id,
 			moderator: moderator, 
-			status: STATES.find( s => s.name === status ).code,
+			status: STATES.find( s => s.name === status || s.label === '' ).code,
 			reason: reason,
 			reasonKey: hashToKey(reason),
 			date: date,
@@ -96,7 +117,7 @@ const processViolations = ( violations, save=true ) => {
 	const change = {}
 	STATES.forEach( s => {
 		total[s.code] = 0
-		change[s.code] = 0
+		change[s.code] = 1
 	})
 
 	violations.forEach( violation => {
@@ -129,12 +150,12 @@ const processViolations = ( violations, save=true ) => {
 const appendCSS = ( styles ) => {
 	const style = document.createElement('style')
 	style.innerHTML = styles
-	document.head.append(style)
+	document.head.append( style )
 }
 
 const appendColorsCSS = ( ) => {
 	let colorsCSS = ''
-	STATES.forEach( s => {
+	STATES.concat( THEME_COLORS ).forEach( s => {
 		colorsCSS += `
 			.in-txt-${s.code} { color: ${s.color} !important; }
 			.in-bg-${s.code} { background-color: ${s.color} !important; }
@@ -146,54 +167,118 @@ const appendColorsCSS = ( ) => {
 const renderLink = ( stats ) => {
 	appendColorsCSS()
 	appendCSS(`
+		.nav.bspace.rbl-block {
+			overflow: visible;
+			height: 41px;
+		}
+		.in-m[tooltip] {
+			position: relative;
+		}
+		.in-m[tooltip]::before {
+			white-space: nowrap;
+			left: 50%;
+			transform: translateX(-50%);
+			background-color: #34495e;
+			color: white;
+			padding: 3px 10px;
+			border-radius: 10px;
+			font-size: 11px;
+		}
+		.in-m:not(:last-child) {
+			margin-right: 10px;
+			padding-right: 10px;
+			border-right: 1px dashed #d9d9d9;
+		}
 		.in-m__box {
 			display: inline-block;
 			height: 13px;
-			min-width: 13px;
+			width: 13px;
+			min-width: 5px;
 			vertical-align: middle;
 			border-radius: 10px;
 			margin: 0 6px;
+			position: relative;
+		}
+		.in-m__box[data-change]::before {
+			content: attr(data-change);
+			display: inline-block;
+			position: absolute;
+			right: -5px;
+			bottom: -5px;
+			z-index: 1;
+			color: white;
+			background-color: #34495e;
+			line-height: 14px;
+			font-size: 9px;
+			padding: 0px 3px;
+			font-weight: bold;
+			border-radius: 10px;
+		}
+		.in-m--success {
+			margin-right: 0 !important;
+			padding-right: 0 !important;
+			border: none !important;
+		}
+		.in-m--success .in-m__box {
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+			margin-right: 0 !important;
+			box-shadow: -5px 0px 5px -5px inset rgba(0, 0, 0, 0.5);
+		}
+		.in-m--success .in-m__box[data-change]::before {
+			right: auto;
+			left: -5px;
+		}
+		.in-m--fail .in-m__box {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+			margin-left: 0 !important;
+		}
+		.in-m--fail .in-m__box {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+			margin-left: 0 !important;
 		}
 		.in-m__value {
 			vertical-align: middle;
-			position: relative;
 		}
-		.in-m__value[data-change]::before {
-			content: attr(data-change);
-			position: absolute;
-			top: 100%;
-			left: 50%;
-			transform: translateX( -50% );
-			font-size: 10px;
-			line-height: 10px;
-			color: white;
-			background-color: #4383af;
-		}
-		.in-m > :last-child {
-			margin-right: 25px;
-		}
-  `)
+	`)
+
+	const renderBox = ({ status, change, style}) => `<span 
+		class="in-m__box in-bg-${status}" 
+		${change ? `data-change="+${change}"` : ''} 
+		${style ? `style="${style}"` : ''}>
+	</span>`
+	const renderValue = ({ value }) => `<span class="in-m__value ${darkmode ? 'in-txt-white' : 'in-txt-main'}">${value}</span>`
+	
+	const renderProgressBar = ( stats ) => {
+		const { success, fail } = stats.total
+		const { success: successChange, fail: failChange } = stats.change
+		const succesRate = success + fail > 0 ? Math.round( 1000 * success / (success + fail ) ) / 10 : 50
+		const failRate = Math.round( 10 * ( 100 - succesRate ) ) / 10
+		const successHTML = `<span class="in-m in-m--success" tooltip="Prawidłowe - ${success} - ${succesRate.toFixed(0)}%">${ renderValue( { value: success } )}${ renderBox( { value: success, status: 'success', style: `width: ${succesRate}px;`, change: successChange } )}</span>`
+		const failHTML = `<span class="in-m in-m--fail" tooltip="Nieprawidłowe - ${fail} - ${failRate.toFixed(0)}%">${ renderBox( { value: fail, status: 'fail', style: `width: ${failRate}px;`, change: failChange } )}${ renderValue( { value: fail } )}</span>`
+		return successHTML+failHTML
+	}
   
-	let linkToStats
+	let content = `<li><a href="http://www.wykop.pl/naruszenia/informator" class="in-link">Statystyki</a></li>`
 	if ( stats.total ) {
 		let statsHTML = ''
+
+		statsHTML += renderProgressBar( stats )
+
 		Object.keys( stats.total ).forEach( status => {
 			const value = stats.total[status]
-			if ( value > 0 ) {
-				const valueEl = `<span class="in-m__value" ${stats.change[status] ? `data-change="${stats.change[status]}"` : ''}>${value}</span>`
-				const boxEl = `<span class="in-m__box in-bg-${status}"></span>`
-				statsHTML += `<span class="in-m in-m--${status}">${status === 'fail' ? boxEl+valueEl : valueEl+boxEl}</span>`
+			if ( !['success', 'fail'].includes( status ) && value > 0 ) {
+				const change = stats.change[status] ? stats.change[status] : null
+				statsHTML += `<span class="in-m in-m--${status}" tooltip="${STATES_STATUTES[status].name} - ${value}" >${ renderValue( { value } )}${ renderBox( { value, status, change } )}</span>`
 			}
 		})
-		linkToStats = `<li>
-			<a href="http://www.wykop.pl/naruszenia/informator">
-				${statsHTML}
-			</a>
-		</liv>`
-	} else {
-		linkToStats = '<li><a href="http://www.wykop.pl/naruszenia/informator">Statystyki</a></liv>'
+		if ( statsHTML ) {
+			content = `<li><a href="http://www.wykop.pl/naruszenia/informator" class="in-link">${statsHTML}</a></liv>`
+		}
 	}
-	document.querySelector('.bspace > ul:last-child').innerHTML += linkToStats
+	document.querySelector('.bspace > ul:last-child').innerHTML += content
 }
 
 // State
@@ -266,7 +351,7 @@ const addViolationToStore = ( violation, store ) => {
 
 	const hours = new Date( date ).getHours()
 
-	store.mods[moderator][hours] = store.mods[moderator][hours] ? store.mods[moderator][hours] + 1 : 1
+	store.mods[moderator].times[hours] = store.mods[moderator].times[hours] ? store.mods[moderator].times[hours] + 1 : 1
 
 	return store
 }

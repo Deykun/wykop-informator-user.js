@@ -10,7 +10,7 @@ const getViolations = () => {
 		const violation = {
 			id: id,
 			moderator: moderator, 
-			status: STATES.find( s => s.name === status ).code,
+			status: STATES.find( s => s.name === status || s.label === '' ).code,
 			reason: reason,
 			reasonKey: hashToKey(reason),
 			date: date,
@@ -34,7 +34,7 @@ const processViolations = ( violations, save=true ) => {
 	const change = {}
 	STATES.forEach( s => {
 		total[s.code] = 0
-		change[s.code] = 0
+		change[s.code] = 1
 	})
 
 	violations.forEach( violation => {

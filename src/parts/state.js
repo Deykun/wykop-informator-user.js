@@ -67,7 +67,7 @@ const addViolationToStore = ( violation, store ) => {
 
 	const hours = new Date( date ).getHours()
 
-	store.mods[moderator][hours] = store.mods[moderator][hours] ? store.mods[moderator][hours] + 1 : 1
+	store.mods[moderator].times[hours] = store.mods[moderator].times[hours] ? store.mods[moderator].times[hours] + 1 : 1
 
 	return store
 }
