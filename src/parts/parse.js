@@ -58,7 +58,9 @@ const processViolations = ( violations, save=true ) => {
 			}
 
 			if ( !checked.includes( id ) ) {
-				change[status]++
+				if ( seen.includes( id ) ) {
+					change[status]++
+				}
 				if ( debug ) {
 					console.log('New volation')
 					console.log( violation )
