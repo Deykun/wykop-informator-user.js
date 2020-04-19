@@ -236,7 +236,7 @@ const renderLink = ( stats ) => {
 			min-width: 5px;
 			vertical-align: middle;
 			border-radius: 10px;
-			margin: 0 6px;
+			margin-left: 6px;
 			position: relative;
 		}
 		.in-m__box[data-change]::before {
@@ -272,12 +272,8 @@ const renderLink = ( stats ) => {
 		.in-m--fail .in-m__box {
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;
-			margin-left: 0 !important;
-		}
-		.in-m--fail .in-m__box {
-			border-top-left-radius: 0;
-			border-bottom-left-radius: 0;
-			margin-left: 0 !important;
+			margin-left: 0;
+			margin-right: 6px;
 		}
 		.in-m__value {
 			vertical-align: middle;
