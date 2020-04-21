@@ -74,7 +74,6 @@ const renderLink = ( stats ) => {
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
 			margin-right: 0 !important;
-			box-shadow: -5px 0px 5px -5px inset rgba(0, 0, 0, 0.5);
 		}
 		.in-m--success .in-m__box[data-change]::before {
 			right: auto;

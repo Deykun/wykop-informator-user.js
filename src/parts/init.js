@@ -11,14 +11,14 @@ const STATES = [
 		checked: true,
 		resolved: true,
 		name: 'Prawidłowe',
-		color: '#8aa380',
+		color: '#73995e',
 	},
 	{
 		code: 'fail',
 		checked: true,
 		resolved: true,
 		name: 'Nieprawidłowe',
-		color: '#b3868f',
+		color: '#c86b6b',
 	},
 	{
 		code: 'changed',

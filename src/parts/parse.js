@@ -73,6 +73,7 @@ const processViolations = ( violations, save=true ) => {
 			change[status]++
 			console.log('Consultation') 
 			store = addViolationToStore( violation, store )
+			store = addConsultedViolationToStore( violation, store )	
 		}
 	})
 

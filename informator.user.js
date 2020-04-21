@@ -25,14 +25,14 @@ const STATES = [
 		checked: true,
 		resolved: true,
 		name: 'Prawidłowe',
-		color: '#8aa380',
+		color: '#73995e',
 	},
 	{
 		code: 'fail',
 		checked: true,
 		resolved: true,
 		name: 'Nieprawidłowe',
-		color: '#b3868f',
+		color: '#c86b6b',
 	},
 	{
 		code: 'changed',
@@ -166,6 +166,7 @@ const processViolations = ( violations, save=true ) => {
 			change[status]++
 			console.log('Consultation') 
 			store = addViolationToStore( violation, store )
+			store = addConsultedViolationToStore( violation, store )	
 		}
 	})
 
@@ -263,7 +264,6 @@ const renderLink = ( stats ) => {
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
 			margin-right: 0 !important;
-			box-shadow: -5px 0px 5px -5px inset rgba(0, 0, 0, 0.5);
 		}
 		.in-m--success .in-m__box[data-change]::before {
 			right: auto;
@@ -333,6 +333,10 @@ const getStore = ( ) => {
 		reasons: {
 		},
 		mods: {
+		},
+		consultation: {
+			total: { },
+			mods: { }
 		}
 	}
 	STATES.forEach( s => {
@@ -367,12 +371,21 @@ const addViolationToStore = ( violation, store ) => {
 	store.reasons[reasonKey].mods[moderator][status] = store.reasons[reasonKey].mods[moderator][status] ? store.reasons[reasonKey].mods[moderator][status] + 1 : 1
 
 	if ( !store.mods[moderator] ) {
-		store.mods[moderator] = { title: moderator, times: { } }
+		store.mods[moderator] = { title: moderator, total: {}, times: {} }
 	}
+	store.mods[moderator].total[status] = store.mods[moderator].total[status] ? store.mods[moderator].total[status] + 1 : 1
 
 	const hours = new Date( date ).getHours()
-
 	store.mods[moderator].times[hours] = store.mods[moderator].times[hours] ? store.mods[moderator].times[hours] + 1 : 1
+
+	return store
+}
+
+const addConsultedViolationToStore = ( violation, store ) => {
+	const { status, moderator } = violation
+
+	store.consultation.total[status] = store.consultation.total[status] + 1
+	store.consultation.mods[moderator][status] = store.consultation.mods[moderator][status] ? store.consultation.mods[moderator][status] + 1 : 1
 
 	return store
 }
