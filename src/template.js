@@ -26,7 +26,7 @@
 // State
 [[state.js]]
 
-if ( document.location.pathname.match('/naruszenia/moje') ) {
+if ( location.pathname.match('/naruszenia/moje') ) {
 	const store = getStore()
 	const { hideThumbnails } = store.settings 
 	if ( hideThumbnails ) {
@@ -35,5 +35,10 @@ if ( document.location.pathname.match('/naruszenia/moje') ) {
 	const violations = getViolations()
 	const { statistics } = processViolations( violations )
 	renderLink( statistics )
+} else if ( location.pathname.match('/naruszenia/') ) {
+	renderLink( )
+	if ( location.pathname.match('/naruszenia/informator') ) {
+		renderInformatorPage( )
+	}
 }
 	

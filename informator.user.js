@@ -205,7 +205,7 @@ const appendColorsCSS = ( ) => {
 	appendCSS( colorsCSS )
 }
 
-const renderLink = ( stats ) => {
+const renderLink = ( stats={} ) => {
 	appendColorsCSS()
 	appendCSS(`
 		.nav.bspace.rbl-block {
@@ -216,14 +216,24 @@ const renderLink = ( stats ) => {
 			position: relative;
 		}
 		.in-m[tooltip]::before {
+			content:attr(tooltip);
+			position:absolute;
+			opacity:0;
+			pointer-events: none;
 			white-space: nowrap;
 			left: 50%;
 			transform: translateX(-50%);
 			background-color: #34495e;
 			color: white;
 			padding: 3px 10px;
-			border-radius: 10px;
+			border-radius: 20px;
 			font-size: 11px;
+			transition:all .2s ease;
+		}
+		.in-m[tooltip]:hover::before {
+			opacity:1;
+			margin-top: 25px;
+			z-index: 200;
 		}
 		.in-m:not(:last-child) {
 			margin-right: 10px;
@@ -297,7 +307,7 @@ const renderLink = ( stats ) => {
 		return successHTML+failHTML
 	}
   
-	let content = `<li><a href="http://www.wykop.pl/naruszenia/informator" class="in-link">Statystyki</a></li>`
+	let content = `<li class="in-m-wrapper in-m-wrapper--link ${ location.pathname.match('/naruszenia/informator') ? 'active' : ''}"><a href="http://www.wykop.pl/naruszenia/informator" class="in-link">Informator</a></li>`
 	if ( stats.total ) {
 		let statsHTML = ''
 
@@ -311,10 +321,30 @@ const renderLink = ( stats ) => {
 			}
 		})
 		if ( statsHTML ) {
-			content = `<li><a href="http://www.wykop.pl/naruszenia/informator" class="in-link">${statsHTML}</a></liv>`
+			content = `<li class="in-m-wrapper in-m-wrapper--stats"><a href="http://www.wykop.pl/naruszenia/informator" class="in-link">${statsHTML}</a></liv>`
 		}
 	}
 	document.querySelector('.bspace > ul:last-child').innerHTML += content
+}
+
+const renderInformatorPage = () => {
+	const store = getStore()
+	const { total } = store
+	const elPage = document.querySelector('.error-page')
+	elPage.outerHTML = `
+		<main class="in-page rbl-block">
+			<section class="in-page-section in-page-section--intro space">
+				<h1>Informator</h1>
+				<p>Treść strony informatora.</p>
+			</section>
+			<section class="in-page-section in-page-section--outro space">
+				<h2>O dodatku</h2>
+				<p>Jeśli uważasz dodatek za użyteczny i wart polecenia pamiętaj, że zawsze <strong>możesz go ocenić</strong> <a class="button submit" href="http://www.wykop.pl/dodatki/pokaz/409/" target="_blank">tutaj</a>. :)</p>
+				<p>Błędy w jego działaniu możesz zgłosić w <a href="http://www.wykop.pl/wiadomosc-prywatna/konwersacja/Deykun/" target="_blank">prywatnej wiadomości</a>.</p>
+			</section>
+		</main>
+	`
+
 }
 
 // State
@@ -390,7 +420,7 @@ const addConsultedViolationToStore = ( violation, store ) => {
 	return store
 }
 
-if ( document.location.pathname.match('/naruszenia/moje') ) {
+if ( location.pathname.match('/naruszenia/moje') ) {
 	const store = getStore()
 	const { hideThumbnails } = store.settings 
 	if ( hideThumbnails ) {
@@ -399,5 +429,10 @@ if ( document.location.pathname.match('/naruszenia/moje') ) {
 	const violations = getViolations()
 	const { statistics } = processViolations( violations )
 	renderLink( statistics )
+} else if ( location.pathname.match('/naruszenia/') ) {
+	renderLink( )
+	if ( location.pathname.match('/naruszenia/informator') ) {
+		renderInformatorPage( )
+	}
 }
 	
