@@ -11,6 +11,7 @@ const STATES = [
 		checked: true,
 		resolved: true,
 		name: 'Prawidłowe',
+		progressBarTip: 'Prawidłowe zgłoszenia',
 		color: '#73995e',
 	},
 	{
@@ -18,6 +19,7 @@ const STATES = [
 		checked: true,
 		resolved: true,
 		name: 'Nieprawidłowe',
+		progressBarTip: 'Nieprawidłowe zgłoszenia',
 		color: '#c86b6b',
 	},
 	{
@@ -25,6 +27,7 @@ const STATES = [
 		checked: true,
 		resolved: true,
 		name: 'Zmieniony powód',
+		progressBarTip: 'Zgłoszenia ze zmienionym powodem',
 		color: '#dfc56e',
 	},
 	{
@@ -32,6 +35,7 @@ const STATES = [
 		checked: true,
 		resolved: false,
 		name: 'W konsultacji',
+		progressBarTip: 'Zgłoszenia przekazane do konsultacji',
 		color: '#62a2b1',
 	},
 	{
@@ -39,6 +43,7 @@ const STATES = [
 		checked: false,
 		resolved: false,
 		name: 'Nowe',
+		progressBarTip: 'Nowe zgłoszenia',
 		color: '#8cb1ba',
 	},
 	{
@@ -47,6 +52,7 @@ const STATES = [
 		resolved: false,
 		name: 'Rozpatrywane',
 		label: '',
+		progressBarTip: 'Rozpatrywane w tym momencie',
 		color: '#717171',
 	},
 ]

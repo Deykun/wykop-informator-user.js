@@ -25,6 +25,7 @@ const STATES = [
 		checked: true,
 		resolved: true,
 		name: 'Prawidłowe',
+		progressBarTip: 'Prawidłowe zgłoszenia',
 		color: '#73995e',
 	},
 	{
@@ -32,6 +33,7 @@ const STATES = [
 		checked: true,
 		resolved: true,
 		name: 'Nieprawidłowe',
+		progressBarTip: 'Nieprawidłowe zgłoszenia',
 		color: '#c86b6b',
 	},
 	{
@@ -39,6 +41,7 @@ const STATES = [
 		checked: true,
 		resolved: true,
 		name: 'Zmieniony powód',
+		progressBarTip: 'Zgłoszenia ze zmienionym powodem',
 		color: '#dfc56e',
 	},
 	{
@@ -46,6 +49,7 @@ const STATES = [
 		checked: true,
 		resolved: false,
 		name: 'W konsultacji',
+		progressBarTip: 'Zgłoszenia przekazane do konsultacji',
 		color: '#62a2b1',
 	},
 	{
@@ -53,6 +57,7 @@ const STATES = [
 		checked: false,
 		resolved: false,
 		name: 'Nowe',
+		progressBarTip: 'Nowe zgłoszenia',
 		color: '#8cb1ba',
 	},
 	{
@@ -61,6 +66,7 @@ const STATES = [
 		resolved: false,
 		name: 'Rozpatrywane',
 		label: '',
+		progressBarTip: 'Rozpatrywane w tym momencie',
 		color: '#717171',
 	},
 ]
@@ -297,13 +303,17 @@ const renderLink = ( stats={} ) => {
 	</span>`
 	const renderValue = ({ value }) => `<span class="in-m__value ${darkmode ? 'in-txt-white' : 'in-txt-main'}">${value}</span>`
 	
+	const progressBarTooltip = ({ status, value, change, percent }) => {
+		return `${STATES_STATUTES[status].progressBarTip} - ${value} ${change > 0 ? ` (nowe: ${change})` : ''}${ percent ? ` - ${percent.toFixed(1)}%` : ''}`
+	}
+
 	const renderProgressBar = ( stats ) => {
 		const { success, fail } = stats.total
 		const { success: successChange, fail: failChange } = stats.change
 		const succesRate = success + fail > 0 ? Math.round( 1000 * success / (success + fail ) ) / 10 : 50
-		const failRate = Math.round( 10 * ( 100 - succesRate ) ) / 10
-		const successHTML = `<span class="in-m in-m--success" tooltip="Prawidłowe - ${success} - ${succesRate.toFixed(0)}%">${ renderValue( { value: success } )}${ renderBox( { value: success, status: 'success', style: `width: ${succesRate}px;`, change: successChange } )}</span>`
-		const failHTML = `<span class="in-m in-m--fail" tooltip="Nieprawidłowe - ${fail} - ${failRate.toFixed(0)}%">${ renderBox( { value: fail, status: 'fail', style: `width: ${failRate}px;`, change: failChange } )}${ renderValue( { value: fail } )}</span>`
+		const failRate = Math.round( 10 * ( 100 - succesRate ) ) / 10		
+		const successHTML = `<span class="in-m in-m--success" tooltip="${progressBarTooltip({ status: 'success', value: success, change: successChange, percent: succesRate })}">${ renderValue( { value: success } )}${ renderBox( { value: success, status: 'success', style: `width: ${succesRate}px;`, change: successChange } )}</span>`
+		const failHTML = `<span class="in-m in-m--fail" tooltip="${progressBarTooltip({ status: 'fail', value: fail, change: failChange, percent: failRate })}">${ renderBox( { value: fail, status: 'fail', style: `width: ${failRate}px;`, change: failChange } )}${ renderValue( { value: fail } )}</span>`
 		return successHTML+failHTML
 	}
   
@@ -317,7 +327,7 @@ const renderLink = ( stats={} ) => {
 			const value = stats.total[status]
 			if ( !['success', 'fail'].includes( status ) && value > 0 ) {
 				const change = stats.change[status] ? stats.change[status] : null
-				statsHTML += `<span class="in-m in-m--${status}" tooltip="${STATES_STATUTES[status].name} - ${value}" >${ renderValue( { value } )}${ renderBox( { value, status, change } )}</span>`
+				statsHTML += `<span class="in-m in-m--${status}" tooltip="${progressBarTooltip({ status, value, change })}">${ renderValue( { value } )}${ renderBox( { value, status, change } )}</span>`		
 			}
 		})
 		if ( statsHTML ) {
@@ -329,13 +339,39 @@ const renderLink = ( stats={} ) => {
 
 const renderInformatorPage = () => {
 	const store = getStore()
-	const { total } = store
+	const { total, mods } = store
 	const elPage = document.querySelector('.error-page')
 	elPage.outerHTML = `
 		<main class="in-page rbl-block">
 			<section class="in-page-section in-page-section--intro space">
 				<h1>Informator</h1>
 				<p>Treść strony informatora.</p>
+			</section>
+			<section class="in-page-section space">
+				<h1>Dev</h1>
+				<hr>
+				<p>
+					<ul>
+						<li>
+							Intro
+							<ul>
+								<li>Legenda</li>
+								<li>Total</li>
+							</ul>
+						</li>
+						<li>
+							Intro
+							<ul>
+								<li>Legenda</li>
+								<li>Total</li>
+							</ul>
+						</li>
+					</ul>
+				</p>
+				<h2>Mods:</h3>
+				${Object.keys(mods).map( moderator => {
+					return mods[moderator].title
+				})}
 			</section>
 			<section class="in-page-section in-page-section--outro space">
 				<h2>O dodatku</h2>
