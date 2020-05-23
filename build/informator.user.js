@@ -303,7 +303,7 @@ const renderLink = ( stats={} ) => {
 	</span>`
 	const renderValue = ({ value }) => `<span class="in-m__value ${darkmode ? 'in-txt-white' : 'in-txt-main'}">${value}</span>`
 	
-	const progressBarTooltip = ({ status, value, change, percent }) => {
+	const linkTooltip = ({ status, value, change, percent }) => {
 		return `${STATES_STATUTES[status].progressBarTip} - ${value} ${change > 0 ? ` (nowe: ${change})` : ''}${ percent ? ` - ${percent.toFixed(1)}%` : ''}`
 	}
 
@@ -312,8 +312,8 @@ const renderLink = ( stats={} ) => {
 		const { success: successChange, fail: failChange } = stats.change
 		const succesRate = success + fail > 0 ? Math.round( 1000 * success / (success + fail ) ) / 10 : 50
 		const failRate = Math.round( 10 * ( 100 - succesRate ) ) / 10		
-		const successHTML = `<span class="in-m in-m--success" tooltip="${progressBarTooltip({ status: 'success', value: success, change: successChange, percent: succesRate })}">${ renderValue( { value: success } )}${ renderBox( { value: success, status: 'success', style: `width: ${succesRate}px;`, change: successChange } )}</span>`
-		const failHTML = `<span class="in-m in-m--fail" tooltip="${progressBarTooltip({ status: 'fail', value: fail, change: failChange, percent: failRate })}">${ renderBox( { value: fail, status: 'fail', style: `width: ${failRate}px;`, change: failChange } )}${ renderValue( { value: fail } )}</span>`
+		const successHTML = `<span class="in-m in-m--success" tooltip="${linkTooltip({ status: 'success', value: success, change: successChange, percent: succesRate })}">${ renderValue( { value: success } )}${ renderBox( { value: success, status: 'success', style: `width: ${succesRate}px;`, change: successChange } )}</span>`
+		const failHTML = `<span class="in-m in-m--fail" tooltip="${linkTooltip({ status: 'fail', value: fail, change: failChange, percent: failRate })}">${ renderBox( { value: fail, status: 'fail', style: `width: ${failRate}px;`, change: failChange } )}${ renderValue( { value: fail } )}</span>`
 		return successHTML+failHTML
 	}
   
@@ -327,7 +327,7 @@ const renderLink = ( stats={} ) => {
 			const value = stats.total[status]
 			if ( !['success', 'fail'].includes( status ) && value > 0 ) {
 				const change = stats.change[status] ? stats.change[status] : null
-				statsHTML += `<span class="in-m in-m--${status}" tooltip="${progressBarTooltip({ status, value, change })}">${ renderValue( { value } )}${ renderBox( { value, status, change } )}</span>`		
+				statsHTML += `<span class="in-m in-m--${status}" tooltip="${linkTooltip({ status, value, change })}">${ renderValue( { value } )}${ renderBox( { value, status, change } )}</span>`		
 			}
 		})
 		if ( statsHTML ) {
@@ -335,6 +335,18 @@ const renderLink = ( stats={} ) => {
 		}
 	}
 	document.querySelector('.bspace > ul:last-child').innerHTML += content
+}
+
+const renderLegend = () => {
+	let HTML = ''
+	STATES.forEach( s => {
+		HTML += `
+			<li class="in-legend">
+				<span class="in-legend-box in-bg-${s.code}">1</span> ${s.name}
+			</li>
+		`
+	})
+	return HTML
 }
 
 const renderInformatorPage = () => {
@@ -353,7 +365,8 @@ const renderInformatorPage = () => {
 				<p>
 					<ul>
 						<li>
-							Intro
+							Legenda
+							${renderLegend()}
 							<ul>
 								<li>Legenda</li>
 								<li>Total</li>

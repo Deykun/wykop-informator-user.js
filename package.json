@@ -1,0 +1,26 @@
+{
+  "name": "wykop-informator-user",
+  "version": "4.0.0",
+  "description": "Dodatkowe informacje o zgłoszeniach w panelu naruszeń portalu Wykop.pl. ",
+  "scripts": {
+    "build": "node generate",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Deykun/wykop-informator-user.js.git"
+  },
+  "keywords": [
+    "wykop"
+  ],
+  "author": "Deykun",
+  "bugs": {
+    "url": "https://github.com/Deykun/wykop-informator-user.js/issues"
+  },
+  "homepage": "https://github.com/Deykun/wykop-informator-user.js#readme",
+  "devDependencies": {
+    "eslint": "^7.1.0",
+    "jest": "^26.0.1",
+    "rewire": "^5.0.0"
+  }
+}

@@ -6,15 +6,15 @@ const fs = require('fs')
 
 let template = fs.readFileSync('src/template.js', 'utf8')
 
-fs.readdir(`./src/parts`, (err, parts) => {
+fs.readdir(`./src/modules`, (err, modules) => {
 
-  parts.map( partFilename => {
-    const partContent = fs.readFileSync(`src/parts/${partFilename}`, 'utf8')
-    template = template.replace(`[[${partFilename}]]`, partContent)
-    console.log(`  ${partFilename} imported`)
+  modules.map( moduleFilename => {
+    const moduleContent = fs.readFileSync(`src/modules/${moduleFilename}`, 'utf8')
+    template = template.replace(`[[${moduleFilename}]]`, moduleContent)
+    console.log(`  ${moduleFilename} imported`)
   })
 
-  fs.writeFileSync('./informator.user.js', template)
+  fs.writeFileSync('./build/informator.user.js', template)
   console.log(' ')
   console.log('✔️  File generated!')
   console.log('')
