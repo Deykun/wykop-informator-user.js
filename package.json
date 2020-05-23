@@ -4,7 +4,7 @@
   "description": "Dodatkowe informacje o zgłoszeniach w panelu naruszeń portalu Wykop.pl. ",
   "scripts": {
     "build": "node generate",
-    "test": "jest"
+    "test": "jest --watch"
   },
   "repository": {
     "type": "git",

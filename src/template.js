@@ -15,30 +15,30 @@
 [[init.js]]
 
 // Helpers
-[[helpers.js]]
+  [[helpers.js]]
 
 // Parse
-[[parse.js]]
+  [[parse.js]]
 
 // Render
-[[render.js]]
+  [[render.js]]
 
 // State
-[[state.js]]
+  [[state.js]]
 
 if ( location.pathname.match('/naruszenia/moje') ) {
-	const store = getStore()
-	const { hideThumbnails } = store.settings 
-	if ( hideThumbnails ) {
-		document.querySelectorAll('#violationsList .media-content').forEach( el => el.parentNode.removeChild(el) )
-	}
-	const violations = getViolations()
-	const { statistics } = processViolations( violations )
-	renderLink( statistics )
+  const store = getStore()
+  const { hideThumbnails } = store.settings 
+  if ( hideThumbnails ) {
+    document.querySelectorAll('#violationsList .media-content').forEach( el => el.parentNode.removeChild(el) )
+  }
+  const violations = getViolations()
+  const { statistics } = processViolations( violations )
+  renderLink( statistics )
 } else if ( location.pathname.match('/naruszenia/') ) {
-	renderLink( )
-	if ( location.pathname.match('/naruszenia/informator') ) {
-		renderInformatorPage( )
-	}
+  renderLink( )
+  if ( location.pathname.match('/naruszenia/informator') ) {
+    renderInformatorPage( )
+  }
 }
 	

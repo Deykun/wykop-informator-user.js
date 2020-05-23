@@ -1,23 +1,23 @@
 const appendCSS = ( styles ) => {
-	const style = document.createElement('style')
-	style.innerHTML = styles
-	document.head.append( style )
+  const style = document.createElement('style')
+  style.innerHTML = styles
+  document.head.append( style )
 }
 
 const appendColorsCSS = ( ) => {
-	let colorsCSS = ''
-	STATES.concat( THEME_COLORS ).forEach( s => {
-		colorsCSS += `
+  let colorsCSS = ''
+  STATES.concat( THEME_COLORS ).forEach( s => {
+    colorsCSS += `
 			.in-txt-${s.code} { color: ${s.color} !important; }
 			.in-bg-${s.code} { background-color: ${s.color} !important; }
 		`
-	})
-	appendCSS( colorsCSS )
+  })
+  appendCSS( colorsCSS )
 }
 
 const renderLink = ( stats={} ) => {
-	appendColorsCSS()
-	appendCSS(`
+  appendColorsCSS()
+  appendCSS(`
 		.nav.bspace.rbl-block {
 			overflow: visible;
 			height: 41px;
@@ -100,64 +100,64 @@ const renderLink = ( stats={} ) => {
 		}
 	`)
 
-	const renderBox = ({ status, change, style}) => `<span 
+  const renderBox = ({ status, change, style}) => `<span 
 		class="in-m__box in-bg-${status}" 
 		${change ? `data-change="+${change}"` : ''} 
 		${style ? `style="${style}"` : ''}>
 	</span>`
-	const renderValue = ({ value }) => `<span class="in-m__value ${darkmode ? 'in-txt-white' : 'in-txt-main'}">${value}</span>`
+  const renderValue = ({ value }) => `<span class="in-m__value ${darkmode ? 'in-txt-white' : 'in-txt-main'}">${value}</span>`
 	
-	const linkTooltip = ({ status, value, change, percent }) => {
-		return `${STATES_STATUTES[status].progressBarTip} - ${value} ${change > 0 ? ` (nowe: ${change})` : ''}${ percent ? ` - ${percent.toFixed(1)}%` : ''}`
-	}
+  const linkTooltip = ({ status, value, change, percent }) => {
+    return `${STATES_STATUTES[status].progressBarTip} - ${value} ${change > 0 ? ` (nowe: ${change})` : ''}${ percent ? ` - ${percent.toFixed(1)}%` : ''}`
+  }
 
-	const renderProgressBar = ( stats ) => {
-		const { success, fail } = stats.total
-		const { success: successChange, fail: failChange } = stats.change
-		const succesRate = success + fail > 0 ? Math.round( 1000 * success / (success + fail ) ) / 10 : 50
-		const failRate = Math.round( 10 * ( 100 - succesRate ) ) / 10		
-		const successHTML = `<span class="in-m in-m--success" tooltip="${linkTooltip({ status: 'success', value: success, change: successChange, percent: succesRate })}">${ renderValue( { value: success } )}${ renderBox( { value: success, status: 'success', style: `width: ${succesRate}px;`, change: successChange } )}</span>`
-		const failHTML = `<span class="in-m in-m--fail" tooltip="${linkTooltip({ status: 'fail', value: fail, change: failChange, percent: failRate })}">${ renderBox( { value: fail, status: 'fail', style: `width: ${failRate}px;`, change: failChange } )}${ renderValue( { value: fail } )}</span>`
-		return successHTML+failHTML
-	}
+  const renderProgressBar = ( stats ) => {
+    const { success, fail } = stats.total
+    const { success: successChange, fail: failChange } = stats.change
+    const succesRate = success + fail > 0 ? Math.round( 1000 * success / (success + fail ) ) / 10 : 50
+    const failRate = Math.round( 10 * ( 100 - succesRate ) ) / 10		
+    const successHTML = `<span class="in-m in-m--success" tooltip="${linkTooltip({ status: 'success', value: success, change: successChange, percent: succesRate })}">${ renderValue( { value: success } )}${ renderBox( { value: success, status: 'success', style: `width: ${succesRate}px;`, change: successChange } )}</span>`
+    const failHTML = `<span class="in-m in-m--fail" tooltip="${linkTooltip({ status: 'fail', value: fail, change: failChange, percent: failRate })}">${ renderBox( { value: fail, status: 'fail', style: `width: ${failRate}px;`, change: failChange } )}${ renderValue( { value: fail } )}</span>`
+    return successHTML+failHTML
+  }
   
-	let content = `<li class="in-m-wrapper in-m-wrapper--link ${ location.pathname.match('/naruszenia/informator') ? 'active' : ''}"><a href="http://www.wykop.pl/naruszenia/informator" class="in-link">Informator</a></li>`
-	if ( stats.total ) {
-		let statsHTML = ''
+  let content = `<li class="in-m-wrapper in-m-wrapper--link ${ location.pathname.match('/naruszenia/informator') ? 'active' : ''}"><a href="http://www.wykop.pl/naruszenia/informator" class="in-link">Informator</a></li>`
+  if ( stats.total ) {
+    let statsHTML = ''
 
-		statsHTML += renderProgressBar( stats )
+    statsHTML += renderProgressBar( stats )
 
-		Object.keys( stats.total ).forEach( status => {
-			const value = stats.total[status]
-			if ( !['success', 'fail'].includes( status ) && value > 0 ) {
-				const change = stats.change[status] ? stats.change[status] : null
-				statsHTML += `<span class="in-m in-m--${status}" tooltip="${linkTooltip({ status, value, change })}">${ renderValue( { value } )}${ renderBox( { value, status, change } )}</span>`		
-			}
-		})
-		if ( statsHTML ) {
-			content = `<li class="in-m-wrapper in-m-wrapper--stats"><a href="http://www.wykop.pl/naruszenia/informator" class="in-link">${statsHTML}</a></liv>`
-		}
-	}
-	document.querySelector('.bspace > ul:last-child').innerHTML += content
+    Object.keys( stats.total ).forEach( status => {
+      const value = stats.total[status]
+      if ( !['success', 'fail'].includes( status ) && value > 0 ) {
+        const change = stats.change[status] ? stats.change[status] : null
+        statsHTML += `<span class="in-m in-m--${status}" tooltip="${linkTooltip({ status, value, change })}">${ renderValue( { value } )}${ renderBox( { value, status, change } )}</span>`		
+      }
+    })
+    if ( statsHTML ) {
+      content = `<li class="in-m-wrapper in-m-wrapper--stats"><a href="http://www.wykop.pl/naruszenia/informator" class="in-link">${statsHTML}</a></liv>`
+    }
+  }
+  document.querySelector('.bspace > ul:last-child').innerHTML += content
 }
 
 const renderLegend = () => {
-	let HTML = ''
-	STATES.forEach( s => {
-		HTML += `
+  let HTML = ''
+  STATES.forEach( s => {
+    HTML += `
 			<li class="in-legend">
 				<span class="in-legend-box in-bg-${s.code}">1</span> ${s.name}
 			</li>
 		`
-	})
-	return HTML
+  })
+  return HTML
 }
 
 const renderInformatorPage = () => {
-	const store = getStore()
-	const { total, mods } = store
-	const elPage = document.querySelector('.error-page')
-	elPage.outerHTML = `
+  const store = getStore()
+  const { total, mods } = store
+  const elPage = document.querySelector('.error-page')
+  elPage.outerHTML = `
 		<main class="in-page rbl-block">
 			<section class="in-page-section in-page-section--intro space">
 				<h1>Informator</h1>
@@ -187,8 +187,8 @@ const renderInformatorPage = () => {
 				</p>
 				<h2>Mods:</h3>
 				${Object.keys(mods).map( moderator => {
-					return mods[moderator].title
-				})}
+    return mods[moderator].title
+  })}
 			</section>
 			<section class="in-page-section in-page-section--outro space">
 				<h2>O dodatku</h2>
