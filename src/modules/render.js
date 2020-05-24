@@ -105,7 +105,7 @@ const renderLink = ( stats={} ) => {
 		${change ? `data-change="+${change}"` : ''} 
 		${style ? `style="${style}"` : ''}>
 	</span>`
-  const renderValue = ({ value }) => `<span class="in-m__value ${darkmode ? 'in-txt-white' : 'in-txt-main'}">${value}</span>`
+  const renderValue = ({ value }) => `<span class="in-m__value ${darkmode() ? 'in-txt-white' : 'in-txt-main'}">${value}</span>`
 	
   const linkTooltip = ({ status, value, change, percent }) => {
     return `${STATES_STATUTES[status].progressBarTip} - ${value} ${change > 0 ? ` (nowe: ${change})` : ''}${ percent ? ` - ${percent.toFixed(1)}%` : ''}`

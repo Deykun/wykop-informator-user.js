@@ -1,9 +1,6 @@
-const version = '4'
-console.info(`%c Informator ${version}`, 'color: white; background: #4383af; padding: 10px 35px; font-size: 1rem; font-family: Arial, Verdana; border-radius: 5px;')
-
-const darkmode = Array.from( document.body.classList ).includes('night')
-
 const debug = true
+
+const darkmode = () => Array.from( document.body.classList ).includes('night')
 
 const STATES = [
   {

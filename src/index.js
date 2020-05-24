@@ -9,9 +9,12 @@ let template = fs.readFileSync('src/template.js', 'utf8')
 fs.readdir(`./src/modules`, (err, modules) => {
 
   modules.map( moduleFilename => {
-    const moduleContent = fs.readFileSync(`src/modules/${moduleFilename}`, 'utf8')
-    template = template.replace(`[[${moduleFilename}]]`, moduleContent)
-    console.log(`  ${moduleFilename} imported`)
+    const isNotTestFile = !moduleFilename.includes('spec.js')
+    if ( isNotTestFile ) {
+      const moduleContent = fs.readFileSync(`src/modules/${moduleFilename}`, 'utf8')
+      template = template.replace(`[[${moduleFilename}]]`, moduleContent)
+      console.log(`  ${moduleFilename} replaced`)
+    }
   })
 
   fs.writeFileSync('./build/informator.user.js', template)

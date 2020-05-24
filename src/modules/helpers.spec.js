@@ -1,8 +1,7 @@
-var rewire = require('rewire')
-var module = rewire('./helpers.js')
+const helpers = require('rewire')('./helpers.js')
 
-const removeDiacritics = module.__get__('removeDiacritics')
-const hashToKey = module.__get__('hashToKey')
+const removeDiacritics = helpers.__get__('removeDiacritics')
+const hashToKey = helpers.__get__('hashToKey')
 
 describe('removeDiacritics()', () => {
   it('should sanitize ąćęńóśźż', () => {

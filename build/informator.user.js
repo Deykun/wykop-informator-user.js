@@ -12,12 +12,9 @@
 // ==/UserScript==
 
 // Inits
-const version = '4'
-console.info(`%c Informator ${version}`, 'color: white; background: #4383af; padding: 10px 35px; font-size: 1rem; font-family: Arial, Verdana; border-radius: 5px;')
-
-const darkmode = Array.from( document.body.classList ).includes('night')
-
 const debug = true
+
+const darkmode = () => Array.from( document.body.classList ).includes('night')
 
 const STATES = [
   {
@@ -301,7 +298,7 @@ const renderLink = ( stats={} ) => {
 		${change ? `data-change="+${change}"` : ''} 
 		${style ? `style="${style}"` : ''}>
 	</span>`
-  const renderValue = ({ value }) => `<span class="in-m__value ${darkmode ? 'in-txt-white' : 'in-txt-main'}">${value}</span>`
+  const renderValue = ({ value }) => `<span class="in-m__value ${darkmode() ? 'in-txt-white' : 'in-txt-main'}">${value}</span>`
 	
   const linkTooltip = ({ status, value, change, percent }) => {
     return `${STATES_STATUTES[status].progressBarTip} - ${value} ${change > 0 ? ` (nowe: ${change})` : ''}${ percent ? ` - ${percent.toFixed(1)}%` : ''}`
@@ -397,35 +394,36 @@ const renderInformatorPage = () => {
 }
 
 // State
-  const getStore = ( ) => {
-  const initStore = {
-    settings: {
-      hideThumbnails: true
-    },
-    latest: {
-      seen: [],
-      checked: [],
-      inConsultation: []
-    },
-    total: {  
-    },
-    reasons: {
-    },
-    mods: {
-    },
-    consultation: {
-      total: { },
-      mods: { }
-    }
+  const initialStore = {
+  settings: {
+    hideThumbnails: true
+  },
+  latest: {
+    seen: [],
+    checked: [],
+    inConsultation: []
+  },
+  total: {  
+  },
+  reasons: {
+  },
+  mods: {
+  },
+  consultation: {
+    total: { },
+    mods: { }
   }
+}
+
+const initStore = ( ) => {
   STATES.forEach( s => {
-    initStore.total[s.code] = 0
+    initialStore.total[s.code] = 0
   })
 
-  let store = localStorage.getItem('informator') ? JSON.parse( localStorage.getItem('informator') ) : initStore
-
-  return store
+  return initialStore
 }
+
+const getStore = () => localStorage.getItem('informator') ? JSON.parse( localStorage.getItem('informator') ) : initStore()
 
 const saveStore = ( store ) => {
   localStorage.setItem('informator', JSON.stringify( store ) )

@@ -3,7 +3,7 @@
   "version": "4.0.0",
   "description": "Dodatkowe informacje o zgłoszeniach w panelu naruszeń portalu Wykop.pl. ",
   "scripts": {
-    "build": "node generate",
+    "build": "node ./src/index.js",
     "test": "jest --watch"
   },
   "repository": {

@@ -1,32 +1,33 @@
-const getStore = ( ) => {
-  const initStore = {
-    settings: {
-      hideThumbnails: true
-    },
-    latest: {
-      seen: [],
-      checked: [],
-      inConsultation: []
-    },
-    total: {  
-    },
-    reasons: {
-    },
-    mods: {
-    },
-    consultation: {
-      total: { },
-      mods: { }
-    }
+const initialStore = {
+  settings: {
+    hideThumbnails: true
+  },
+  latest: {
+    seen: [],
+    checked: [],
+    inConsultation: []
+  },
+  total: {  
+  },
+  reasons: {
+  },
+  mods: {
+  },
+  consultation: {
+    total: { },
+    mods: { }
   }
+}
+
+const initStore = ( ) => {
   STATES.forEach( s => {
-    initStore.total[s.code] = 0
+    initialStore.total[s.code] = 0
   })
 
-  let store = localStorage.getItem('informator') ? JSON.parse( localStorage.getItem('informator') ) : initStore
-
-  return store
+  return initialStore
 }
+
+const getStore = () => localStorage.getItem('informator') ? JSON.parse( localStorage.getItem('informator') ) : initStore()
 
 const saveStore = ( store ) => {
   localStorage.setItem('informator', JSON.stringify( store ) )
