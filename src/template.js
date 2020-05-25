@@ -27,7 +27,7 @@
   [[state.js]]
 
 if ( location.pathname.match('/naruszenia/moje') ) {
-  const store = getStore()
+  const store = getState()
   const { hideThumbnails } = store.settings 
   if ( hideThumbnails ) {
     document.querySelectorAll('#violationsList .media-content').forEach( el => el.parentNode.removeChild(el) )

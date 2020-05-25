@@ -124,7 +124,7 @@ const hashToKey = text => removeDiacritics( text.toLowerCase() ).replace(/ /g, '
 }
 
 const processViolations = ( violations, save=true ) => {
-  let store = getStore()
+  let store = getState()
   const { seen, checked, inConsultation } = store.latest
   const total = {}
   const change = {}
@@ -177,7 +177,7 @@ const processViolations = ( violations, save=true ) => {
     console.log('Przed', store.latest)
     store.latest = newLatest
     console.log('Po', newLatest)
-    saveStore( store )
+    saveState( store )
   }
 
   return {
@@ -347,7 +347,7 @@ const renderLegend = () => {
 }
 
 const renderInformatorPage = () => {
-  const store = getStore()
+  const store = getState()
   const { total, mods } = store
   const elPage = document.querySelector('.error-page')
   elPage.outerHTML = `
@@ -423,11 +423,11 @@ const initStore = ( ) => {
   return initialStore
 }
 
-const getStore = () => localStorage.getItem('informator') ? JSON.parse( localStorage.getItem('informator') ) : initStore()
+const storeKey = 'informator'
 
-const saveStore = ( store ) => {
-  localStorage.setItem('informator', JSON.stringify( store ) )
-}
+const getState = () => localStorage.getItem( storeKey ) ? JSON.parse( localStorage.getItem( storeKey ) ) : initStore()
+
+const saveState = ( store ) => localStorage.setItem( storeKey, JSON.stringify( store ) )
 
 const addViolationToStore = ( violation, store ) => {
   const { reason, reasonKey, status, moderator, date } = violation
@@ -468,7 +468,7 @@ const addConsultedViolationToStore = ( violation, store ) => {
 }
 
 if ( location.pathname.match('/naruszenia/moje') ) {
-  const store = getStore()
+  const store = getState()
   const { hideThumbnails } = store.settings 
   if ( hideThumbnails ) {
     document.querySelectorAll('#violationsList .media-content').forEach( el => el.parentNode.removeChild(el) )

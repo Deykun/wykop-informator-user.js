@@ -28,7 +28,7 @@ const getViolations = () => {
 }
 
 const processViolations = ( violations, save=true ) => {
-  let store = getStore()
+  let store = getState()
   const { seen, checked, inConsultation } = store.latest
   const total = {}
   const change = {}
@@ -81,7 +81,7 @@ const processViolations = ( violations, save=true ) => {
     console.log('Przed', store.latest)
     store.latest = newLatest
     console.log('Po', newLatest)
-    saveStore( store )
+    saveState( store )
   }
 
   return {

@@ -154,7 +154,7 @@ const renderLegend = () => {
 }
 
 const renderInformatorPage = () => {
-  const store = getStore()
+  const store = getState()
   const { total, mods } = store
   const elPage = document.querySelector('.error-page')
   elPage.outerHTML = `
