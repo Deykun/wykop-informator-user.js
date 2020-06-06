@@ -1,7 +1,7 @@
 {
   "name": "wykop-informator-user",
   "version": "4.0.0",
-  "description": "Dodatkowe informacje o zgłoszeniach w panelu naruszeń portalu Wykop.pl. ",
+  "description": "Dodatkowe informacje o zgłoszeniach w panelu naruszeń portalu Wykop.pl.",
   "scripts": {
     "build": "node ./src/index.js",
     "test": "jest --watch"

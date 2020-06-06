@@ -1,3 +1,11 @@
+const appendJS = ( src ) => {
+  const script = document.createElement('script')
+  script.src = src
+  document.body.append(script)
+	
+  return script
+}
+
 const appendCSS = ( styles ) => {
   const style = document.createElement('style')
   style.innerHTML = styles
@@ -154,6 +162,10 @@ const renderLegend = () => {
 }
 
 const renderInformatorPage = () => {
+  const script = appendJS('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js')
+  script.addEventListener('load', () => {
+    console.log('Chart JS is avaible!')
+  })
   const store = getState()
   const { total, mods } = store
   const elPage = document.querySelector('.error-page')
