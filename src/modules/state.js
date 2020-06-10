@@ -1,4 +1,4 @@
-const initialStore = {
+export const initialStore = {
   settings: {
     hideThumbnails: true
   },
@@ -19,7 +19,7 @@ const initialStore = {
   }
 }
 
-const initStore = ( ) => {
+export const initStore = ( ) => {
   STATES.forEach( s => {
     initialStore.total[s.code] = 0
   })
@@ -27,13 +27,13 @@ const initStore = ( ) => {
   return initialStore
 }
 
-const storeKey = 'informator'
+export const storeKey = 'informator'
 
-const getState = () => localStorage.getItem( storeKey ) ? JSON.parse( localStorage.getItem( storeKey ) ) : initStore()
+export const getState = () => window.localStorage.getItem( storeKey ) ? JSON.parse( window.localStorage.getItem( storeKey ) ) : initStore()
 
-const saveState = ( store ) => localStorage.setItem( storeKey, JSON.stringify( store ) )
+export const saveState = ( store ) => window.localStorage.setItem( storeKey, JSON.stringify( store ) )
 
-const addViolationToStore = ( violation, store ) => {
+export const addViolationToStore = ( violation, store ) => {
   const { reason, reasonKey, status, moderator, date } = violation
 
   store.total[status] = store.total[status] + 1
@@ -62,7 +62,7 @@ const addViolationToStore = ( violation, store ) => {
   return store
 }
 
-const addConsultedViolationToStore = ( violation, store ) => {
+export const addConsultedViolationToStore = ( violation, store ) => {
   const { status, moderator } = violation
 
   store.consultation.total[status] = store.consultation.total[status] + 1

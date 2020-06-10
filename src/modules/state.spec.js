@@ -1,16 +1,25 @@
-const rewire = require('rewire')
-const initModule = rewire('./init.js')
-const stateModule = rewire('./state.js')
 
-const STATES = initModule.__get__('STATES')
-stateModule.__set__('STATES', STATES)
-const getState = stateModule.__get__('getState')
-const saveState = stateModule.__get__('saveState')
-const initialStore = stateModule.__get__('initialStore')
+import {
+  STATES,
+} from './init'
+
+import {
+  getState,
+  saveState,
+  initialStore,
+} from './state'
 
 describe('getState()', () => {
-  it('should init store for empty localStorage with totals', () => {
-    stateModule.__set__('localStorage', { getItem: () => null })
+  global.STATES = STATES;
+
+  var localStorageMock = {}; 
+
+  Object.defineProperty(window, 'localStorage', {
+    value: localStorageMock
+  });
+
+  it('should init store for empty window.localStorage with totals', () => {
+    window.localStorage.getItem = () => null
 
     const state = getState()
 
@@ -24,21 +33,23 @@ describe('getState()', () => {
 
   it('should use "informator" as itemKey', () => {
     let usedKey
-    stateModule.__set__('localStorage', { getItem: (key) => {
+    window.localStorage.getItem = (key) => {
       usedKey = key
       return null
-    }})
+    }
 
     getState()
 
     expect( usedKey ).toEqual( 'informator' )
   })
 
-  it('should return saved JSON state from localStorage', () => {
+  it('should return saved JSON state from window.localStorage', () => {
     const fakeState = {
       str: 'text'
     }
-    stateModule.__set__('localStorage', { getItem: () => JSON.stringify( fakeState ) })
+    global.window.localStorage.getItem = () => {
+      return JSON.stringify( fakeState )
+    }
 
     const state = getState()
 
@@ -54,9 +65,9 @@ describe('getState()', () => {
     }
 
     let JSONstate
-    stateModule.__set__('localStorage', { setItem: (key, value) => {
+    window.localStorage.setItem = (key, value) => {
       JSONstate = value
-    }})
+    }
 
     saveState(fakeState)
 

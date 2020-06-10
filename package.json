@@ -4,7 +4,8 @@
   "description": "Dodatkowe informacje o zgłoszeniach w panelu naruszeń portalu Wykop.pl.",
   "scripts": {
     "build": "node ./src/index.js",
-    "test": "jest --watch"
+    "test": "jest --collectCoverage",
+    "test-dev": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -19,8 +20,10 @@
   },
   "homepage": "https://github.com/Deykun/wykop-informator-user.js#readme",
   "devDependencies": {
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "babel-jest": "^26.0.1",
     "eslint": "^7.1.0",
-    "jest": "^26.0.1",
-    "rewire": "^5.0.0"
+    "jest": "^26.0.1"
   }
 }

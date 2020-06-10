@@ -1,4 +1,4 @@
-const getViolations = () => {
+export const getViolations = () => {
   const violations = []
   document.getElementById('violationsList').querySelectorAll('tbody tr').forEach( vTr => {
     const id = vTr.querySelector('td:nth-child(3) p').textContent.split(':').reverse().pop()
@@ -27,7 +27,7 @@ const getViolations = () => {
   return violations
 }
 
-const processViolations = ( violations, save=true ) => {
+export const processViolations = ( violations, save=true ) => {
   let store = getState()
   const { seen, checked, inConsultation } = store.latest
   const total = {}

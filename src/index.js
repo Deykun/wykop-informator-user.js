@@ -6,13 +6,14 @@ const fs = require('fs')
 
 let template = fs.readFileSync('src/template.js', 'utf8')
 
-fs.readdir(`./src/modules`, (err, modules) => {
+fs.readdir('./src/modules', (err, modules) => {
 
   modules.map( moduleFilename => {
     const isNotTestFile = !moduleFilename.includes('spec.js')
     if ( isNotTestFile ) {
       const moduleContent = fs.readFileSync(`src/modules/${moduleFilename}`, 'utf8')
-      template = template.replace(`[[${moduleFilename}]]`, moduleContent)
+      const moduleContentWithoutExport = moduleContent.replace(/export const/g, 'const')
+      template = template.replace(`[[${moduleFilename}]]`, moduleContentWithoutExport)
       console.log(`  ${moduleFilename} replaced`)
     }
   })

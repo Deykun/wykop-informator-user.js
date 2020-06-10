@@ -437,9 +437,9 @@ const initStore = ( ) => {
 
 const storeKey = 'informator'
 
-const getState = () => localStorage.getItem( storeKey ) ? JSON.parse( localStorage.getItem( storeKey ) ) : initStore()
+const getState = () => window.localStorage.getItem( storeKey ) ? JSON.parse( window.localStorage.getItem( storeKey ) ) : initStore()
 
-const saveState = ( store ) => localStorage.setItem( storeKey, JSON.stringify( store ) )
+const saveState = ( store ) => window.localStorage.setItem( storeKey, JSON.stringify( store ) )
 
 const addViolationToStore = ( violation, store ) => {
   const { reason, reasonKey, status, moderator, date } = violation

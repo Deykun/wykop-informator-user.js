@@ -1,8 +1,8 @@
-const debug = true
+export const debug = true
 
-const darkmode = () => Array.from( document.body.classList ).includes('night')
+export const darkmode = () => Array.from( document.body.classList ).includes('night')
 
-const STATES = [
+export const STATES = [
   {
     code: 'success',
     checked: true,
@@ -54,16 +54,16 @@ const STATES = [
   },
 ]
 
-const STATES_STATUTES = {}
-const CHECKED_STATES = []
-const RESOLVED_STATES = []
+export const STATES_STATUTES = {}
+export const CHECKED_STATES = []
+export const RESOLVED_STATES = []
 STATES.forEach( s => {
   STATES_STATUTES[s.code] = s
   if ( s.resolved ) { RESOLVED_STATES.push( s.code ) }
   if ( s.checked ) { CHECKED_STATES.push( s.code ) }
 } )
 
-const THEME_COLORS = [
+export const THEME_COLORS = [
   {
     code: 'main',
     color: '#34495e'
