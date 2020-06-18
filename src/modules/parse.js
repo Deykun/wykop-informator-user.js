@@ -78,9 +78,7 @@ export const processViolations = ( violations, save=true ) => {
   })
 
   if ( save ) {
-    console.log('Przed', store.latest)
     store.latest = newLatest
-    console.log('Po', newLatest)
     saveState( store )
   }
 

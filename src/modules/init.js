@@ -55,13 +55,16 @@ export const STATES = [
 ]
 
 export const STATES_STATUTES = {}
-export const CHECKED_STATES = []
-export const RESOLVED_STATES = []
+
+const checked_states_init = []
+const resolved_states_init = []
 STATES.forEach( s => {
   STATES_STATUTES[s.code] = s
-  if ( s.resolved ) { RESOLVED_STATES.push( s.code ) }
-  if ( s.checked ) { CHECKED_STATES.push( s.code ) }
+  if ( s.resolved ) { resolved_states_init.push( s.code ) }
+  if ( s.checked ) { checked_states_init.push( s.code ) }
 } )
+export const CHECKED_STATES = checked_states_init
+export const RESOLVED_STATES = resolved_states_init
 
 export const THEME_COLORS = [
   {
