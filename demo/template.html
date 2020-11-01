@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <title>demo</title>
+    <style>
+      .body {
+        padding: 0;
+        margin: 0;
+        min-height: 100vh;  
+      }
+
+      .content {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        
+        height: 400px;
+        width: 400px;
+
+        border: 2px dashed #eee;
+      }
+    </style>
+  </head>
+<body>
+  <div class="content">
+    <canvas id="chart-area"></canvas>
+  </div>
+
+  <script>
+    [[informator.user.js]]
+
+    const script = appendJS('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js')
+
+    script.addEventListener('load', () => {
+      console.log('Chart JS is avaible!')
+
+      var config = {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: [
+              75,
+              25,
+              10,
+              10,
+              5,
+              3,
+            ],
+            backgroundColor: [
+              "#73995e",
+              "#c86b6b",
+              "#dfc56e",
+              "#62a2b1",
+              "#8cb1ba",
+              "#717171",
+            ],
+            label: 'Dataset 1'
+          }],
+          labels: [
+            'Prawidłowe',
+            'Nieprawidłowe',
+            'Zmieniony powód',
+            'W konsultacji',
+            'Nowe',
+            'Rozpatrywane',
+          ]
+        },
+        options: {
+          responsive: true,
+          legend: {
+            position: 'top',
+          },
+          animation: {
+            animateScale: true,
+            animateRotate: true
+          }
+        }
+      };
+
+      var ctx = document.getElementById('chart-area').getContext('2d');
+      new Chart(ctx, config);
+    });
+  </script>
+</body>
+</html>

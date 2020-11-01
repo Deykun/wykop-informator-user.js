@@ -4,6 +4,7 @@
   "description": "Dodatkowe informacje o zgłoszeniach w panelu naruszeń portalu Wykop.pl.",
   "scripts": {
     "build": "node ./src/index.js",
+    "demo": "npm run build && node ./src/demo.js",
     "test": "jest --collectCoverage",
     "test-dev": "jest --watch"
   },
