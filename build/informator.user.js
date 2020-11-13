@@ -217,7 +217,7 @@ const appendColorsCSS = ( ) => {
   appendCSS( colorsCSS )
 }
 
-const renderLink = ( stats={} ) => {
+const renderLink = ( stats = {} ) => {
   appendColorsCSS()
   appendCSS(`
 		.nav.bspace.rbl-block {
@@ -343,58 +343,98 @@ const renderLink = ( stats={} ) => {
   document.querySelector('.bspace > ul:last-child').innerHTML += content
 }
 
-const renderLegend = () => {
-  let HTML = ''
-  STATES.forEach( s => {
-    HTML += `
-			<li class="in-legend">
-				<span class="in-legend-box in-bg-${s.code}">1</span> ${s.name}
-			</li>
-		`
-  })
-  return HTML
+const refreshCharts = () => {
+	pieCharts = document.querySelectorAll('.in-pie-chart');
+
+	pieCharts.forEach(chartNode => {
+		const chartData = {
+			type: 'doughnut',
+			data: {
+				datasets: [{
+					data: [],
+					backgroundColor: [],
+					hoverBackgroundColor: [],
+					label: 'Chart',
+				}],
+				labels: [],
+			},
+			options: {
+				responsive: true,
+				legend: {
+					display: false,
+				},
+				animation: {
+					animateScale: true,
+					animateRotate: true,
+				}
+			}
+		};
+
+		STATES.forEach(({ code, name, color }) => {
+			const value = chartNode.getAttribute(`data-${code}`) || 0;
+
+			if (value > 0) {
+				chartData.data.datasets[0].data.push(value)
+				chartData.data.datasets[0].backgroundColor.push(color);
+				chartData.data.datasets[0].hoverBackgroundColor.push(color);
+				chartData.data.labels.push(name);
+			}
+		})
+
+		const chartContext = chartNode.getContext('2d');
+		new Chart(chartContext, chartData);
+	});
+}
+
+const renderPieChart = (summary = {}) => {
+	let HTML = '<canvas class="in-pie-chart"';
+	STATES.forEach(({ code }) => {
+		const value = summary[code] || 0;
+		HTML += ` data-${code}="${value}" `;
+	})
+	return HTML+'></canvas>';
+}
+
+const renderLegend = ( total = {} ) => {
+	let HTML = '<ul>';
+	STATES.forEach( state => {
+		const { code, name } = state;
+
+		HTML += `<li class="in-legend"><span class="in-legend-box in-bg-${code}">${total[code]}</span> ${name}</li>`;
+	})
+	return HTML+'</ul>';
 }
 
 const renderInformatorPage = () => {
   const script = appendJS('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js')
   script.addEventListener('load', () => {
-    console.log('Chart JS is avaible!')
+	console.log('Chart JS is avaible!');
+	refreshCharts();
   })
   const store = getState()
-  const { total, mods } = store
+  const { total, mods, reasons: storeReasons } = store
+
   const elPage = document.querySelector('.error-page')
   elPage.outerHTML = `
 		<main class="in-page rbl-block">
-			<section class="in-page-section in-page-section--intro space">
-				<h1>Informator</h1>
-				<p>Treść strony informatora.</p>
-			</section>
-			<section class="in-page-section space">
-				<h1>Dev</h1>
-				<hr>
-				<p>
+			${renderLegend(total)}
+			<section>
+				<strong>Filtry</strong>
+				<div>
+					<strong>Moderatorzy:</strong>
 					<ul>
-						<li>
-							Legenda
-							${renderLegend()}
-							<ul>
-								<li>Legenda</li>
-								<li>Total</li>
-							</ul>
-						</li>
-						<li>
-							Intro
-							<ul>
-								<li>Legenda</li>
-								<li>Total</li>
-							</ul>
-						</li>
+					${Object.keys(mods).map(modKey => {
+						return `<li><button data-toggle-mod="${modKey}">${mods[modKey].title}</button></li>`;
+					})}
 					</ul>
-				</p>
-				<h2>Mods:</h3>
-				${Object.keys(mods).map( moderator => {
-    return mods[moderator].title
-  })}
+				</div>
+			</section>
+			<sections class="in-charts">
+				${Object.keys(storeReasons).map(reasonKey => {
+					const reasonObject = storeReasons[reasonKey];
+
+					return `<div class="in-chart in-chart in-pie-chart-wrapper">${renderPieChart(reasonObject)}<h3>${reasonObject.title}</h3></div>`;
+				})}
 			</section>
 			<section class="in-page-section in-page-section--outro space">
 				<h2>O dodatku</h2>
@@ -402,8 +442,7 @@ const renderInformatorPage = () => {
 				<p>Błędy w jego działaniu możesz zgłosić w <a href="http://www.wykop.pl/wiadomosc-prywatna/konwersacja/Deykun/" target="_blank">prywatnej wiadomości</a>.</p>
 			</section>
 		</main>
-	`
-
+	`;
 }
 
 // State
